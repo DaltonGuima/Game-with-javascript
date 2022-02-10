@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Fase 05</title>
+    <link rel="stylesheet" href="css.css"/>
+</head>
+<body onload="inicializar()">
+    <div class="fase">
+        <img src="imagem/fase5.png" alt="Fase 05">
+    </div>
+    <div class="vida1">
+        <img id="1" src="imagem/coracao1.png" alt="Coração 01" width=50px; height=50px;>
+    </div>
+    <div class="vida2">
+        <img id="2" src="imagem/coracao2.png" alt="Coração 02" width=50px; height=50px;>
+    </div>
+    <div class="vida3">
+        <img id="3" src="imagem/coracao3.png" alt="Coração 03" width=50px; height=50px;>
+    </div>
+    <canvas id="canvas" width="600" height="480">
+    </canvas>
+    <script type="text/javascript">    
+        var barraAltura, barraLargura, jogadorPosicaoX, velocidadeJogador, bolaDiametro, bolaPosX, bolaPosY, velocidadeBola, pontosJogador, colisao;   
+        function inicializar()
+        {
+            barraAltura = 15;
+            barraLargura = 90;            
+            pontosJogador = 0;
+            jogadorPosicaoX = (canvas.width - barraLargura) / 2;
+            velocidadeJogador = 70;
+            canvas = document.getElementById("canvas");
+            context = canvas.getContext("2d");				           
+            bolaDiametro = 10;
+            bolaPosX = canvas.width / 2;
+            bolaPosY = -10;
+            velocidadeBola = 15;
+            colisao = false;      
+            vida = 3;      
+            document.addEventListener('keydown', keyDown);            
+            setInterval(gameLoop, 30);
+        }        
+        function keyDown(e) 
+        {
+            if(e.keyCode == 37)
+            {
+                if(jogadorPosicaoX > 0)
+                {
+                    jogadorPosicaoX -= velocidadeJogador;
+                }
+            }            
+            if(e.keyCode == 39)
+            {
+                if(jogadorPosicaoX < (canvas.width - barraLargura))
+                {
+                    jogadorPosicaoX += velocidadeJogador;
+                }
+            }
+        }
+        function gameLoop()
+        {
+            //Limpa Tela
+            context.clearRect(0, 0, canvas.width, canvas.height);            
+            // Bola
+            context.beginPath();
+            context.arc(bolaPosX, bolaPosY, bolaDiametro, 0, Math.PI * 2, true);
+            context.fill();           
+            if(bolaPosY <= canvas.height)
+            {
+                bolaPosY += velocidadeBola;
+            }
+            else
+            {
+                bolaPosX = Math.random() * 600;
+                bolaPosY = -10;
+                colisao = false;
+            } 
+            // Checar Colisão Correta
+            // Checar Colisão Correta
+            while((bolaPosX > jogadorPosicaoX && bolaPosX < jogadorPosicaoX + barraLargura) && bolaPosY >= canvas.height - barraAltura / 4 && colisao == false && (pontosJogador < 10))
+            {
+                pontosJogador++;
+                colisao = true;
+                if(pontosJogador == 10)
+                {         
+                    alert ("Parabens!!!Você ganhou");
+                    window.location="vitoria.html";
+                }
+            } 
+            //Checar Colisão Errado
+            if(bolaPosY > canvas.height && colisao == false)
+            {
+                alert("Você perdeu!!!!Tente outra vez!!!!");
+                pontosJogador = 0;
+                jogadorPosicaoX = (canvas.width - barraLargura - barraAltura) / 2;
+                bolaPosX = canvas.width / 2;
+                bolaPosY = -10;
+                vida = vida - 1;
+                if(vida == 2)
+                {
+                    document.getElementById("1").style.display = "none";
+                }
+                else if(vida == 1)
+                {
+                    document.getElementById("2").style.display = "none";
+                }
+                else if(vida == 0)
+                {
+                    document.getElementById("3").style.display = "none";
+                }               
+            }
+            else if(vida == 0)
+            {
+                alert("Você esgotou todas as vidas!!!")
+                window.location="fase1.html";
+                vida = 3;
+            }
+            // Escreve o placar
+            context.font = "32pt Tahoma";
+            context.fillText(pontosJogador, canvas.width - 70, 50);            
+            // Jogador
+            context.fillRect(jogadorPosicaoX, canvas.height - barraAltura, barraLargura, barraAltura);
+        }
+    </script>
+</body>
+</html>
